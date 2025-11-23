@@ -22,11 +22,13 @@ export default function Home() {
       } else {
         const endpoint = 'https://api.openrouter.ai/v1/chat/completions';
         const payload = { model, messages: [{ role: 'user', content: prompt }] };
+
         const r = await fetch('/api/openrouter', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ endpoint, payload })
         });
+
         const data = await r.json();
         setOutput(JSON.stringify(data, null, 2));
       }
