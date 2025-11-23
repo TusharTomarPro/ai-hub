@@ -1,10 +1,10 @@
-import fetch from 'node-fetch';
-
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
 
   const { model, inputs, parameters } = req.body;
-  if (!model || inputs === undefined) return res.status(400).json({ error: 'model and inputs required' });
+  if (!model || inputs === undefined) {
+    return res.status(400).json({ error: 'model and inputs required' });
+  }
 
   const HF_KEY = process.env.HF_API_KEY;
   if (!HF_KEY) return res.status(500).json({ error: 'HF_API_KEY not configured' });
@@ -17,7 +17,10 @@ export default async function handler(req, res) {
         Authorization: `Bearer ${HF_KEY}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ inputs, parameters: parameters || {} })
+      body: JSON.stringify({
+        inputs,
+        parameters: parameters || {}
+      })
     });
 
     const contentType = r.headers.get('content-type') || '';
@@ -29,6 +32,9 @@ export default async function handler(req, res) {
       return res.status(r.status).send(text);
     }
   } catch (err) {
-    res.status(500).json({ error: 'HF proxy failed', details: String(err) });
+    res.status(500).json({
+      error: 'HF proxy failed',
+      details: String(err)
+    });
   }
 }
